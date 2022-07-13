@@ -13,8 +13,11 @@ import {
   Query,
   Redirect,
   UseFilters,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
 import {
   JoiValidationPipe,
   ValidationPipe,
@@ -26,16 +29,17 @@ import { CreateCatDto } from './dto/create-cat.dto';
 
 @Controller('cats')
 // @Controller({host:'http://www.baidu.com'})
+// @UseGuards(RolesGuard)
 export class CatsController {
   constructor(private catsService: CatsService) {}
   @Get()
-  @Redirect('https://www.baidu.com', 302)
+  // @Redirect('https://www.baidu.com', 302)
   findAll(@Query('version') version: string) {
-    if (version) {
-      return {
-        url: 'http://www.google.com',
-      };
-    }
+    // if (version) {
+    //   return {
+    //     url: 'http://www.google.com',
+    //   };
+    // }
     return this.catsService.findAll();
   }
   @Get(':id')
@@ -49,6 +53,7 @@ export class CatsController {
   // @Header('Cache-Control', 'none')
   // @UseFilters(HttpExceptionFilter)
   // @UsePipes(new JoiValidationPipe(createCatSchema))
+  @Roles('admin')
   create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
     // throw new ForbiddenException();
     return this.catsService.create(createCatDto);

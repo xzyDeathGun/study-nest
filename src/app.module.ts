@@ -4,10 +4,11 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { RolesGuard } from './common/guards/roles.guard';
 // import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { ValidationPipe } from './common/pipes/customValidation.pipe';
@@ -22,7 +23,8 @@ import { DatabaseModule } from './modules/database/database.module';
   // 全局注入异常捕获方式1  方式2见main.ts
   providers: [
     // { provide: APP_FILTER, useClass: AllExceptionsFilter },
-    { provide: APP_PIPE, useClass: ValidationPipe },
+    // { provide: APP_PIPE, useClass: ValidationPipe },
+    { provide: APP_GUARD, useClass: RolesGuard },
     AppService,
     CatsService,
   ],
