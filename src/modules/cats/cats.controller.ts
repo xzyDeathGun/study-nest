@@ -1,13 +1,19 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Query,
-  Redirect
+  Redirect,
+  UseFilters,
 } from '@nestjs/common';
+// import { HttpExceptionFilter } from '../../common/filters/http-exception.filter';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 
@@ -20,18 +26,23 @@ export class CatsController {
   findAll(@Query('version') version: string) {
     if (version) {
       return {
-        url: 'http://www.google.com'
+        url: 'http://www.google.com',
       };
     }
     return this.catsService.findAll();
   }
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id') id: number) {
+    if (id > 100) {
+      throw new NotFoundException();
+    }
     return `Get by ${id}`;
   }
   @Post()
-  @Header('Cache-Control', 'none')
+  // @Header('Cache-Control', 'none')
+  // @UseFilters(HttpExceptionFilter)
   create(@Body() createCatDto: CreateCatDto) {
+    throw new ForbiddenException();
     return this.catsService.create(createCatDto);
   }
 }
