@@ -14,10 +14,12 @@ import {
   Redirect,
   UseFilters,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import {
   JoiValidationPipe,
   ValidationPipe,
@@ -30,6 +32,7 @@ import { CreateCatDto } from './dto/create-cat.dto';
 @Controller('cats')
 // @Controller({host:'http://www.baidu.com'})
 // @UseGuards(RolesGuard)
+@UseInterceptors(LoggingInterceptor)
 export class CatsController {
   constructor(private catsService: CatsService) {}
   @Get()
