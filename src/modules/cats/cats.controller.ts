@@ -17,7 +17,10 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
+import { first } from 'rxjs';
+import { Auth } from '../../common/decorators/auth.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { User } from '../../common/decorators/user.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { LoggingInterceptor } from '../../common/interceptors/logging.interceptor';
 import {
@@ -56,9 +59,12 @@ export class CatsController {
   // @Header('Cache-Control', 'none')
   // @UseFilters(HttpExceptionFilter)
   // @UsePipes(new JoiValidationPipe(createCatSchema))
-  @Roles('admin')
-  create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
-    // throw new ForbiddenException();
-    return this.catsService.create(createCatDto);
+  @Auth('admin')
+  create(@User(new ValidationPipe()) user: any) {
+    console.log(`Hello ${user}`);
   }
+  // create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
+  //   // throw new ForbiddenException();
+  //   return this.catsService.create(createCatDto);
+  // }
 }
