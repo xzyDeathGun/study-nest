@@ -1,4 +1,5 @@
 import {
+  Injectable,
   MiddlewareConsumer,
   Module,
   NestModule,
@@ -17,6 +18,22 @@ import { CatsModule } from './modules/cats/cats.module';
 import { CatsService } from './modules/cats/cats.service';
 import { DatabaseModule } from './modules/database/database.module';
 
+@Injectable()
+class LoggerService {}
+// 对已存在的provider提供简写
+const loggerAliasProvider = {
+  provide: 'AliasedLoggerService',
+  useExisting: LoggerService,
+};
+
+// 基于非service的provider
+const configFactory = {
+  provide: 'CONFIG',
+  useFactory() {
+    return process.env.NODE_ENV === 'development' ? 0 : 1;
+  },
+};
+
 @Module({
   imports: [CatsModule, DatabaseModule],
   controllers: [AppController, CatsController],
@@ -26,7 +43,19 @@ import { DatabaseModule } from './modules/database/database.module';
     // { provide: APP_PIPE, useClass: ValidationPipe },
     { provide: APP_GUARD, useClass: RolesGuard },
     AppService,
-    CatsService,
+    // {provide:CatsService,useValue:{}},
+    // {
+    //   provide: CatsService,
+    //   useFactory(
+    //     optionsProvider: OptionsProvider,
+    //     optionalProvider?: string,
+    //   ) { },
+    //   inject:[optionsProvider]
+    // },
+    // CatsService,
+    LoggerService,
+    loggerAliasProvider,
+    configFactory,
   ],
 })
 export class AppModule implements NestModule {
